@@ -9,7 +9,7 @@ def main(page: ft.Page):
     page.window.height = 600
     page.window.resizable = False
     page.window.always_on_top = True
-    page.scroll = 'adptative' # Só quando for necessário
+    page.scroll = 'adptative' # Só quando for necessário a rolagem
 
     page.fonts = {
         "Nicole": "src/assets/fonts/sf_distant_galaxy/SF Distant Galaxy Outline Italic.ttf"

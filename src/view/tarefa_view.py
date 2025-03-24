@@ -8,7 +8,7 @@ class Task(ft.Row):
     def __init__(self, task: Tarefa):
         super().__init__()
         self.task = task
-        # Checkbox para representar o status da tarefa
+        #  status da tarefa
         self.checkbox = ft.Checkbox(value=task.situacao, on_change=self.on_checkbox_change)
         # Text para exibir a descrição
         self.text_view = ft.Text(task.descricao)
