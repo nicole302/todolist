@@ -11,7 +11,7 @@ class Task(ft.Row):
         # Checkbox para representar o status da tarefa
         self.checkbox = ft.Checkbox(value=task.situacao, on_change=self.on_checkbox_change)
         # Text para exibir a descrição
-        self.text_view = ft.Text(task.descricao, font_family= "Nicole")
+        self.text_view = ft.Text(task.descricao)
         # TextField para edição (inicialmente invisível)
         self.text_edit = ft.TextField(value=task.descricao, visible=False)
         # Botão para iniciar a edição
@@ -81,10 +81,10 @@ def atualizar_lista_tarefas(tasks_column):
 def on_add_tarefa_click(e, descricao_input, situacao_input, result_text, tasks_column):
     descricao = descricao_input.value
     situacao = situacao_input.value
-    tarefa_cadastrada = cadastrar_tarefa(descricao, situacao)
-    if tarefa_cadastrada:
-        result_text.value = f"Tarefa cadastrada com sucesso! ID: {tarefa_cadastrada.id}"
-        atualizar_lista_tarefas(tasks_column)
+    tarefa_id = cadastrar_tarefa(descricao, situacao)
+    if tarefa_id:
+        result_text.value = f"Tarefa cadastrada com sucesso! ID: {tarefa_id}"
+        atualizar_lista_tarefas(tasks_column)  # Atualiza a lista de tarefas
     else:
         result_text.value = "Erro ao cadastrar a tarefa"
     result_text.update()
@@ -122,7 +122,4 @@ def main(page: ft.Page):
     
     # Carrega as tarefas existentes
     atualizar_lista_tarefas(tasks_column)
-
-
-ft.app(target=main)
 

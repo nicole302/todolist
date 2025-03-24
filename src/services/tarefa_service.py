@@ -15,8 +15,8 @@ def cadastrar_tarefa(descricao: str, situacao: bool):
         # Commit para salvar a tarefa no banco de dados
         session.commit()
         
-        # Retorna o objeto Tarefa inserido
-        return nova_tarefa
+        # Retorna o ID da tarefa inserida
+        return nova_tarefa.id
 
     except SQLAlchemyError as e:
         # Caso ocorra um erro, faz o rollback
