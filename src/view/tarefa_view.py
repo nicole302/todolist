@@ -16,8 +16,9 @@ class Task(ft.Row):
                 ft.Checkbox(value=task.situacao, on_change=self.on_checkbox_change, fill_color=ft.Colors.GREEN_100),
             ]
         )
-        # Text para exibir a descrição
-        self.text_view = ft.Text(task.descricao, color=ft.Colors.DEEP_ORANGE_900)
+        # Text para exibir a descrição com limite de 30 caracteres
+        descricao_limitada = task.descricao if len(task.descricao) <= 30 else task.descricao[:30] + "..."
+        self.text_view = ft.Text(descricao_limitada, color=ft.Colors.AMBER_500)  # Muda a cor do texto para AMBER_500
         # TextField para edição (inicialmente invisível)
         self.text_edit = ft.TextField(value=task.descricao, visible=False, color=ft.Colors.DEEP_ORANGE_900)
         # Botão para iniciar a edição
@@ -136,11 +137,11 @@ def on_add_tarefa_click(e, descricao_input, situacao_input, result_text, tasks_c
         tarefa_id = cadastrar_tarefa(descricao, situacao)
         if tarefa_id:
             result_text.value = f"Tarefa cadastrada com sucesso!"
-            result_text.color = ft.Colors.DEEP_ORANGE_900
+            result_text.color = ft.Colors.AMBER_500
             atualizar_lista_tarefas(tasks_column, result_text)  # Atualiza a lista de tarefas e verifica estado
         else:
             result_text.value = "Erro ao cadastrar a tarefa"
-            result_text.color = ft.Colors.DEEP_ORANGE_900
+            result_text.color = ft.Colors.AMBER_500
     except OperationalError as e:
         result_text.value = f"Erro ao cadastrar tarefa: {str(e)}"
         result_text.color = ft.Colors.RED
@@ -163,7 +164,7 @@ def main(page: ft.Page):
     
         ]
     )
-    result_text = ft.Text(color=ft.Colors.DEEP_ORANGE_900)
+    result_text = ft.Text(color=ft.Colors.ORANGE)
     
     add_button = ft.ElevatedButton(
         text="Adicionar Tarefa",
