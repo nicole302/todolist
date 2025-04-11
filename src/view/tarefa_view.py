@@ -75,7 +75,7 @@ class Task(ft.Row):
         self.update()
 
     background_image = ft.Image(
-        src="src/assets/images/starwars_bg.jpg",
+        src="src/assets/images/system.jpg",
         fit=ft.ImageFit.COVER,
         expand=True,)
     

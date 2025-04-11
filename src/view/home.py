@@ -6,7 +6,6 @@ def main(page: ft.Page):
     page.bgcolor = ft.Colors.BLACK
     page.scroll = 'adaptive'
 
-    # Adiciona as fontes ao HTML
     page.fonts = {
         "Nicole": "src/assets/fonts/sf_distant_galaxy/SF Distant Galaxy Outline Italic.ttf",
         "Nicole2": "src/assets/fonts/sf_distant_galaxy/SF Distant Galaxy Italic.ttf"
@@ -22,8 +21,10 @@ def main(page: ft.Page):
 
     descricao_input = ft.TextField(
         label="Descrição da Tarefa",
+        label_style=ft.TextStyle(color=ft.Colors.AMBER_500),
         autofocus=True,
-        expand=True,
+        expand=False,
+        width=300,
         bgcolor=ft.Colors.BLACK,
         color=ft.Colors.AMBER_500,
         border_color=ft.Colors.DEEP_ORANGE_900,
@@ -76,39 +77,36 @@ def main(page: ft.Page):
         opacity=0.8
     )
 
-    # Adiciona o plano de fundo como primeiro elemento da página
+    # Imagem de fundo via ft.Image
+    fundo = ft.Container(
+        content=ft.Image(
+            src="https://i.postimg.cc/FHtV5J9S/system.jpg",
+            fit=ft.ImageFit.COVER,
+            expand=True,
+        ),
+        expand=True
+    )
+
+    conteudo = ft.Container(
+        content=ft.Column(
+            [
+                titulo,
+                ft.Row([descricao_input, add_button], alignment=ft.MainAxisAlignment.CENTER),
+                tarefas_column,
+                situacao_input,
+                result_text,
+                refresh_page_button
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            expand=True
+        ),
+        margin=ft.Margin(20, 20, 20, 20)
+    )
+
     page.add(
         ft.Stack(
-            [
-                ft.Container(
-                    content=ft.Image(
-                        src="src/assets/images/binary_system_bg.jpeg",
-                        fit=ft.ImageFit.COVER
-                    ),
-                    expand=True,
-                    width=page.window.width,
-                    height=page.window.height
-                ),
-                ft.Container(
-                    content=ft.Column(
-                        [
-                            titulo,
-                            ft.Row(
-                                [descricao_input, add_button],
-                                alignment=ft.MainAxisAlignment.CENTER
-                            ),
-                            tarefas_column,
-                            situacao_input,
-                            result_text,
-                            refresh_page_button
-                        ],
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        expand=True
-                    ),
-                    margin=ft.Margin(20, 20, 20, 20)
-                )
-            ]
+            controls=[fundo, conteudo]
         )
     )
 
@@ -116,9 +114,5 @@ def main(page: ft.Page):
         page.update()
 
     page.on_resize = on_resize
-
-    # Inicializa a lista de tarefas
     atualizar_lista_tarefas(tarefas_column, result_text)
 
-# Execute a aplicação
-ft.app(target=main)
