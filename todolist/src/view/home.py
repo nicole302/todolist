@@ -10,18 +10,32 @@ def main(page: ft.Page):
     page.fonts = {
         "Nicole": "src/assets/fonts/sf_distant_galaxy/SF Distant Galaxy Outline Italic.ttf",
         "Nicole2": "src/assets/fonts/sf_distant_galaxy/SF Distant Galaxy Italic.ttf",
+        
     }
 
+    # Define o tema da página corretamente
+    page.theme = ft.Theme(
+        text_theme=ft.TextTheme(
+            title_large=ft.TextStyle(
+                font_family="Heveltica",
+                weight=ft.FontWeight.BOLD,
+                italic=True
+            )
+        )
+    )
+    page.theme_mode = ft.ThemeMode.DARK  # Define o tema como escuro
 
-    titulo = ft.Text(
+    titulo = ft.Text( # Título da página
         "To do List",
-        font_family="Nicole2",
+        font_family="Heveltica",
         text_align="center",
+        italic=True,
+        weight=ft.FontWeight.BOLD,
         size=50,
         color=ft.Colors.AMBER_500
     )
 
-    descricao_input = ft.TextField(
+    descricao_input = ft.TextField( # Campo de entrada para a descrição da tarefa
         label="Descrição da Tarefa",
         label_style=ft.TextStyle(color=ft.Colors.AMBER_500),
         autofocus=True,
@@ -30,24 +44,25 @@ def main(page: ft.Page):
         color=ft.Colors.AMBER_500,
         border_color=ft.Colors.DEEP_ORANGE_900,
         text_style=ft.TextStyle(color=ft.Colors.AMBER_500),
-        max_length=30
+        max_length=30,
+        keyboard_type=ft.KeyboardType.TEXT  # Configura o teclado físico para texto
     )
 
-    situacao_input = ft.Checkbox(
+    situacao_input = ft.Checkbox( # Checkbox para indicar se a tarefa está concluída
         label="Tarefa concluída",
         value=False,
         fill_color=ft.Colors.GREEN_100,
         label_style=ft.TextStyle(color=ft.Colors.AMBER_500)
     )
 
-    add_button = ft.ElevatedButton(
+    add_button = ft.ElevatedButton( # Botão para adicionar a tarefa
         "Cadastrar Tarefa",
         on_click=lambda e: [
             on_add_tarefa_click(
                 e,
                 descricao_input,
                 situacao_input,
-                result_text,
+                result_text_container.content,  # Atualiza o texto dentro do container
                 tarefas_column
             ),
             setattr(descricao_input, "value", ""),
@@ -58,22 +73,32 @@ def main(page: ft.Page):
         opacity=0.8
     )
 
-    tarefas_column = ft.Column(
+    tarefas_column = ft.Column( # Coluna para exibir as tarefas cadastradas
         alignment=ft.MainAxisAlignment.START,
         horizontal_alignment=ft.CrossAxisAlignment.STRETCH,
         expand=True,  # Expande para ocupar o espaço vertical disponível
         scroll=ft.ScrollMode.AUTO
     )
 
-    result_text = ft.Text(
-        color=ft.Colors.AMBER_500,
-        font_family="Nicole2",
-        expand=True  # Expande para ocupar o espaço horizontal disponível
+    result_text_container = ft.Container( # Container para exibir mensagens de resultado
+        content=ft.Text(
+            color=ft.Colors.AMBER_500,
+            font_family="Heveltica",
+            italic=True,
+            weight=ft.FontWeight.BOLD,
+            expand=True  # Expande para ocupar o espaço horizontal disponível
+        ),
+        bgcolor=ft.Colors.WHITE,
+        opacity=0.5,
+        padding=ft.Padding(10, 10, 10, 10)  # Corrige o erro adicionando os quatro argumentos
     )
 
-    refresh_page_button = ft.ElevatedButton(
+    refresh_page_button = ft.ElevatedButton( # Botão para atualizar a lista de tarefas
         "Atualizar Página",
-        on_click=lambda e: atualizar_lista_tarefas(tarefas_column, result_text),
+        on_click=lambda e: atualizar_lista_tarefas(
+            tarefas_column,
+            result_text_container.content  # Atualiza o texto dentro do container
+        ),
         color=ft.Colors.DEEP_ORANGE_900,
         bgcolor=ft.Colors.DEEP_ORANGE_100,
         opacity=0.8
@@ -87,7 +112,8 @@ def main(page: ft.Page):
             width=page.width,       # Define a largura como a largura da página
             height=page.height,     # Define a altura como a altura da página
         ),
-        expand=True
+        expand=True,
+        opacity=0.5,  # Define a opacidade da imagem de fundo
     )
 
     conteudo = ft.Container(
@@ -107,7 +133,7 @@ def main(page: ft.Page):
                     [refresh_page_button],
                     alignment=ft.MainAxisAlignment.CENTER  # Alinha o botão "Atualizar Página" ao centro
                 ),
-                result_text
+                result_text_container  # Substitui o result_text pelo container
             ],
             alignment=ft.MainAxisAlignment.START,
             horizontal_alignment=ft.CrossAxisAlignment.START,
@@ -129,5 +155,5 @@ def main(page: ft.Page):
         page.update()
 
     page.on_resize = on_resize
-    atualizar_lista_tarefas(tarefas_column, result_text)
+    atualizar_lista_tarefas(tarefas_column, result_text_container.content)  # Atualiza o texto dentro do container
 

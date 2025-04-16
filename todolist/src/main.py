@@ -25,5 +25,5 @@ def main(page: ft.Page):
     home_main(page)
 
 if __name__ == "__main__":
-    ft.app(target=main)  # Executa o aplicativo Flet, passando a função main como alvo
+    ft.app(target=main, view=ft.WEB_BROWSER)  # Executa o aplicativo Flet, passando a função main como alvo
 

@@ -10,7 +10,6 @@ class Task(ft.Row):
     def __init__(self, task: Tarefa):
         super().__init__()
         self.task = task
-        #  status da tarefa
         self.checkbox = ft.Row(
             controls=[
                 ft.Checkbox(value=task.situacao, on_change=self.on_checkbox_change, fill_color=ft.Colors.GREEN_100),
@@ -18,7 +17,14 @@ class Task(ft.Row):
         )
         # Text para exibir a descrição com limite de 30 caracteres
         descricao_limitada = task.descricao if len(task.descricao) <= 30 else task.descricao[:30] + "..."
-        self.text_view = ft.Text(descricao_limitada, color=ft.Colors.AMBER_500)  # Muda a cor do texto para AMBER_500
+        # Adiciona o traço no texto se a tarefa estiver concluída
+        self.text_view = ft.Text(
+            descricao_limitada,
+            color=ft.Colors.AMBER_500,
+            style=ft.TextStyle(
+                decoration=ft.TextDecoration.LINE_THROUGH if task.situacao else ft.TextDecoration.NONE
+            )  # Define o traço com base no status
+        )
         # TextField para edição (inicialmente invisível)
         self.text_edit = ft.TextField(
             value=task.descricao,
@@ -44,7 +50,7 @@ class Task(ft.Row):
         # Ajuste o espaçamento entre os botões usando um ft.Row
         self.button_row = ft.Row(
             controls=[self.edit_button, self.delete_button],
-            spacing=5  # Define o espaçamento entre os botões
+            spacing=5   
         )
         self.controls = [
             self.checkbox,
@@ -77,16 +83,23 @@ class Task(ft.Row):
         self.update()
     
     def delete(self, e):
-        # Exclui a tarefa do banco e oculta o widget
+        # Exclui a tarefa do banco e remove o widget da interface
         excluir_tarefas(self.task.id)
-        self.visible = False
-        self.update()
+        self.controls.clear()  
+        self.visible = False  
+        self.update()  
     
     def on_checkbox_change(self, e):
         # Atualiza o status da tarefa (checkbox)
-        checkbox_value = self.checkbox.controls[0].value  # Acessa o valor do Checkbox
+        checkbox_value = self.checkbox.controls[0].value  
         result = editar_tarefa(self.task.id, self.task.descricao, checkbox_value)
         self.task.situacao = checkbox_value
+
+        # Atualiza o traço no texto com base no status e aumenta a grossura
+        self.text_view.style = ft.TextStyle(
+            decoration=ft.TextDecoration.LINE_THROUGH if checkbox_value else ft.TextDecoration.NONE,
+            decoration_thickness=2.0  # Define a grossura do traço
+        )
         self.update()
 
     background_image = ft.Image(
@@ -96,18 +109,21 @@ class Task(ft.Row):
     
 
 # Função para verificar o estado das tarefas e exibir mensagens
-def verificar_estado_tarefas(tasks_column, result_text):
+def verificar_estado_tarefas(tasks_column, result_text_container):
     if not tasks_column.controls:
-        result_text.value = "Você não tem tarefas. Adicione para que a Força esteja com você."
-        result_text.font_family = "Nicole2"  # Define a fonte
-        result_text.color = ft.Colors.YELLOW
+        result_text_container.value = "VOCÊ NÃO TEM TAREFAS. ADICIONE PARA QUE A FORÇA ESTEJA COM VOCÊ."
+        result_text_container.font_family = "Heveltica"  # Define a fonte
+        result_text_container.color = ft.Colors.DEEP_ORANGE_ACCENT_700
+        result_text_container.visible = True
     elif all(isinstance(control, Task) and control.checkbox.controls[0].value for control in tasks_column.controls):
-        result_text.value = "Parabéns você concluiu todas as suas tarefas!"
-        result_text.font_family = "Nicole2"  # Define a fonte
-        result_text.color = ft.Colors.GREEN
+        result_text_container.value = "PARABÉNS VOCÊ CONCLUIU TODAS AS SUAS TAREFAS!"
+        result_text_container.font_family = "Heveltica"  # Define a fonte
+        result_text_container.color = ft.Colors.GREEN_900
+        result_text_container.visible = True
     else:
-        result_text.value = ""
-    result_text.update()
+        result_text_container.value = ""  # Limpa o texto quando não há mensagem
+        result_text_container.visible = False  # Oculta o container quando não há mensagem
+    result_text_container.update()
 
 # Função para gerenciar a sessão do banco de dados
 def get_session():
@@ -128,7 +144,7 @@ def atualizar_lista_tarefas(tasks_column, result_text=None):
         tasks_column.controls.clear()
         todas_tarefas = session.query(Tarefa).all()
         for task in todas_tarefas:
-            tasks_column.controls.append(Task(task))
+            tasks_column.controls.append(Task(task))  # Recria os widgets com o status correto
         tasks_column.update()
         if result_text:
             verificar_estado_tarefas(tasks_column, result_text)
