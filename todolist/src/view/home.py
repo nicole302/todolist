@@ -6,12 +6,6 @@ def main(page: ft.Page):
     page.bgcolor = ft.Colors.BLACK
     page.scroll = 'adaptive'
 
-    # Registra as fontes personalizadas usando caminhos relativos corrigidos
-    page.fonts = {
-        "Nicole": "src/assets/fonts/sf_distant_galaxy/SF Distant Galaxy Outline Italic.ttf",
-        "Nicole2": "src/assets/fonts/sf_distant_galaxy/SF Distant Galaxy Italic.ttf",
-        
-    }
 
     # Define o tema da página corretamente
     page.theme = ft.Theme(
@@ -39,13 +33,13 @@ def main(page: ft.Page):
         label="Descrição da Tarefa",
         label_style=ft.TextStyle(color=ft.Colors.AMBER_500),
         autofocus=True,
-        expand=True,  # Expande para ocupar o espaço disponível
+        expand=True, 
         bgcolor=ft.Colors.BLACK,
         color=ft.Colors.AMBER_500,
         border_color=ft.Colors.DEEP_ORANGE_900,
         text_style=ft.TextStyle(color=ft.Colors.AMBER_500),
         max_length=30,
-        keyboard_type=ft.KeyboardType.TEXT  # Configura o teclado físico para texto
+        keyboard_type=ft.KeyboardType.TEXT  
     )
 
     situacao_input = ft.Checkbox( # Checkbox para indicar se a tarefa está concluída
@@ -62,7 +56,7 @@ def main(page: ft.Page):
                 e,
                 descricao_input,
                 situacao_input,
-                result_text_container.content,  # Atualiza o texto dentro do container
+                result_text_container.content,  
                 tarefas_column
             ),
             setattr(descricao_input, "value", ""),
@@ -76,11 +70,11 @@ def main(page: ft.Page):
     tarefas_column = ft.Column( # Coluna para exibir as tarefas cadastradas
         alignment=ft.MainAxisAlignment.START,
         horizontal_alignment=ft.CrossAxisAlignment.STRETCH,
-        expand=True,  # Expande para ocupar o espaço vertical disponível
+        expand=True,  
         scroll=ft.ScrollMode.AUTO
     )
 
-    result_text_container = ft.Container( # Container para exibir mensagens de resultado
+    result_text_container = ft.Container(  # Container para exibir mensagens de resultado
         content=ft.Text(
             color=ft.Colors.AMBER_500,
             font_family="Heveltica",
@@ -97,7 +91,7 @@ def main(page: ft.Page):
         "Atualizar Página",
         on_click=lambda e: atualizar_lista_tarefas(
             tarefas_column,
-            result_text_container.content  # Atualiza o texto dentro do container
+            result_text_container.content 
         ),
         color=ft.Colors.DEEP_ORANGE_900,
         bgcolor=ft.Colors.DEEP_ORANGE_100,
@@ -108,12 +102,12 @@ def main(page: ft.Page):
     fundo = ft.Container(
         content=ft.Image(
             src="https://i.postimg.cc/FHtV5J9S/system.jpg",
-            fit=ft.ImageFit.COVER,  # Ajusta a imagem para cobrir toda a área
-            width=page.width,       # Define a largura como a largura da página
-            height=page.height,     # Define a altura como a altura da página
+            fit=ft.ImageFit.COVER, 
+            width=page.width,      
+            height=page.height,   
         ),
         expand=True,
-        opacity=0.5,  # Define a opacidade da imagem de fundo
+        opacity=0.5,  
     )
 
     conteudo = ft.Container(
@@ -133,11 +127,11 @@ def main(page: ft.Page):
                     [refresh_page_button],
                     alignment=ft.MainAxisAlignment.CENTER  # Alinha o botão "Atualizar Página" ao centro
                 ),
-                result_text_container  # Substitui o result_text pelo container
+                result_text_container  
             ],
             alignment=ft.MainAxisAlignment.START,
             horizontal_alignment=ft.CrossAxisAlignment.START,
-            expand=True  # Expande para ocupar o espaço vertical disponível
+            expand=True 
         ),
         margin=ft.Margin(20, 20, 20, 20)
     )
@@ -155,5 +149,5 @@ def main(page: ft.Page):
         page.update()
 
     page.on_resize = on_resize
-    atualizar_lista_tarefas(tarefas_column, result_text_container.content)  # Atualiza o texto dentro do container
+    atualizar_lista_tarefas(tarefas_column, result_text_container.content)
 

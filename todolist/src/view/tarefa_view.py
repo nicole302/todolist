@@ -30,8 +30,8 @@ class Task(ft.Row):
             value=task.descricao,
             visible=False,
             color=ft.Colors.DEEP_ORANGE_900,
-            width=150,  # Reduz a largura do TextField para 150
-            read_only=False  # Permite edição, mas mantém o tamanho fixo
+            width=150,  
+            read_only=False  
         )
         # Botão para iniciar a edição
         self.edit_button = ft.IconButton(
@@ -61,7 +61,7 @@ class Task(ft.Row):
         ]
     
     def edit(self, e):
-        # Ativa o modo edição: oculta o texto e mostra o campo de edição
+        # Ativa o modo edição
         self.edit_button.visible = False
         self.save_button.visible = True
         self.text_view.visible = False
@@ -69,13 +69,18 @@ class Task(ft.Row):
         self.update()
     
     def save(self, e):
-        # Ao salvar, atualiza a tarefa no banco e na interface
+        # Atualiza a tarefa no banco e na interface
         new_text = self.text_edit.value
-        checkbox_value = self.checkbox.controls[0].value  # Acessa o valor do Checkbox
+        checkbox_value = self.checkbox.controls[0].value  
         result = editar_tarefa(self.task.id, new_text, checkbox_value)
         if "editada com sucesso" in result:
             self.task.descricao = new_text
             self.text_view.value = new_text
+            # Atualiza o traço no texto com base no status
+            self.text_view.style = ft.TextStyle(
+                decoration=ft.TextDecoration.LINE_THROUGH if checkbox_value else ft.TextDecoration.NONE,
+                decoration_thickness=2.0  # Mantém a grossura do traço
+            )
         self.edit_button.visible = True
         self.save_button.visible = False
         self.text_view.visible = True
@@ -95,10 +100,10 @@ class Task(ft.Row):
         result = editar_tarefa(self.task.id, self.task.descricao, checkbox_value)
         self.task.situacao = checkbox_value
 
-        # Atualiza o traço no texto com base no status e aumenta a grossura
+        # Atualiza o traço no texto com base no status 
         self.text_view.style = ft.TextStyle(
             decoration=ft.TextDecoration.LINE_THROUGH if checkbox_value else ft.TextDecoration.NONE,
-            decoration_thickness=2.0  # Define a grossura do traço
+            decoration_thickness=2.0  
         )
         self.update()
 
@@ -115,14 +120,14 @@ def verificar_estado_tarefas(tasks_column, result_text_container):
         result_text_container.font_family = "Heveltica"  # Define a fonte
         result_text_container.color = ft.Colors.DEEP_ORANGE_ACCENT_700
         result_text_container.visible = True
-    elif all(isinstance(control, Task) and control.checkbox.controls[0].value for control in tasks_column.controls):
+    elif all(isinstance(control, Task) and control.task.situacao for control in tasks_column.controls):
         result_text_container.value = "PARABÉNS VOCÊ CONCLUIU TODAS AS SUAS TAREFAS!"
-        result_text_container.font_family = "Heveltica"  # Define a fonte
+        result_text_container.font_family = "Heveltica" 
         result_text_container.color = ft.Colors.GREEN_900
         result_text_container.visible = True
     else:
-        result_text_container.value = ""  # Limpa o texto quando não há mensagem
-        result_text_container.visible = False  # Oculta o container quando não há mensagem
+        result_text_container.value = ""  
+        result_text_container.visible = False 
     result_text_container.update()
 
 # Função para gerenciar a sessão do banco de dados
@@ -130,7 +135,7 @@ def get_session():
     try:
         session = Session()
         # Testa a conexão executando uma consulta simples
-        session.execute(text("SELECT 1"))  # Usa text para a consulta
+        session.execute(text("SELECT 1"))  
         return session
     except OperationalError:
         # Fecha a sessão e cria uma nova em caso de erro
@@ -139,23 +144,23 @@ def get_session():
 
 # Função para atualizar a lista de tarefas na interface
 def atualizar_lista_tarefas(tasks_column, result_text=None):
-    session = get_session()  # Usa a função para obter a sessão
+    session = get_session()  
     try:
         tasks_column.controls.clear()
         todas_tarefas = session.query(Tarefa).all()
         for task in todas_tarefas:
-            tasks_column.controls.append(Task(task))  # Recria os widgets com o status correto
+            tasks_column.controls.append(Task(task))
         tasks_column.update()
         if result_text:
-            verificar_estado_tarefas(tasks_column, result_text)
+            verificar_estado_tarefas(tasks_column, result_text)  # Chama a função para verificar o estado
     finally:
         session.close()
 
 
 # Função acionada ao clicar no botão de adicionar tarefa
 def on_add_tarefa_click(e, descricao_input, situacao_input, result_text, tasks_column):
-    descricao = descricao_input.value.strip()  # Remove espaços em branco
-    situacao = situacao_input.value  # Acessa o valor do Checkbox diretamente
+    descricao = descricao_input.value.strip()  
+    situacao = situacao_input.value 
 
     if not descricao:  # Verifica se a descrição está vazia
         result_text.value = "Erro: A descrição da tarefa não pode estar vazia."
@@ -163,13 +168,13 @@ def on_add_tarefa_click(e, descricao_input, situacao_input, result_text, tasks_c
         result_text.update()
         return
 
-    session = get_session()  # Usa a função para obter a sessão
+    session = get_session() 
     try:
         tarefa_id = cadastrar_tarefa(descricao, situacao)
         if tarefa_id:
             result_text.value = f"Tarefa cadastrada com sucesso!"
             result_text.color = ft.Colors.AMBER_500
-            atualizar_lista_tarefas(tasks_column, result_text)  # Atualiza a lista de tarefas e verifica estado
+            atualizar_lista_tarefas(tasks_column, result_text)  
         else:
             result_text.value = "Erro ao cadastrar a tarefa"
             result_text.color = ft.Colors.AMBER_500
@@ -191,7 +196,7 @@ def main(page: ft.Page):
     new_task_desc = ft.TextField(
         label="Descrição da Tarefa",
         color=ft.Colors.DEEP_ORANGE_900,
-        expand=True  # Expande para ocupar o espaço disponível
+        expand=True  
     )
     new_task_status = ft.Checkbox(
         label="Tarefa concluída",
@@ -221,7 +226,7 @@ def main(page: ft.Page):
                 new_task_desc,
                 ft.Row(
                     [new_task_status, add_button],
-                    alignment=ft.MainAxisAlignment.START  # Alinha à esquerda
+                    alignment=ft.MainAxisAlignment.START 
                 ),
                 result_text,
                 refresh_button,

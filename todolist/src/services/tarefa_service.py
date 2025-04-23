@@ -30,7 +30,6 @@ def cadastrar_tarefa(descricao: str, situacao: bool):
 def listar_tarefas():
     try:
         session = Session()
-        # Busca todas as tarefas no banco de dados
         todas_tarefas = session.query(Tarefa).all()
         return todas_tarefas
     except SQLAlchemyError as e:
@@ -64,16 +63,13 @@ def excluir_tarefas(tarefas_id):
         
         # Verifica se a exc_tarefa existe
         if exc_tarefa:
-            # Exclui a exc_tarefa
-            session.delete(exc_tarefa)
-            # Salva as alterações no banco de dados
+            session.delete(exc_tarefa) 
             session.commit()
             return f'Tarefa excluída com sucesso!'
         else:
             return f'Tarefa não encontrada!'
         
     except Exception as e:
-        #rollback
         session.rollback()
         return f'Erro ao excluir a tarefa {e}'
     
@@ -101,7 +97,6 @@ def editar_tarefa(tarefa_id: int, novo_descricao: str, novo_situacao: bool):
         return f'Tarefa {tarefa_id} editada com sucesso!'
         
     except Exception as e:
-        # rollback
         session.rollback()
         return f'Erro ao editar a tarefa: {e}'
     finally:
